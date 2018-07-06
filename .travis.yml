@@ -1,10 +1,5 @@
-{
-  "python": "3.6",
-  "script": [
-    "echo \"TODO\""
-  ],
-  "install": [
-    "make build"
-  ],
-  "language": "python"
-}
+language: python
+rvm:
+ - 3.6
+os: osx
+install: True
