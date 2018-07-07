@@ -1,8 +1,24 @@
-#from pymel.core import *
+from pymel.core import *
+#import pymel.tools.mel2py as mel2py
+#string = '''connectAttr -f blinn3.outColor blinn3SG.surfaceShader;'''
+#print mel2py.mel2pyStr(string)
+
+class rgb(object):
+    def __init__(self, r, g, b):
+        self.red = r
+        self.green= g
+        self.blue = b
+    
+    def __str__(self):
+        return "rgb(%s, %s, %s)" %(str(self.red), str(self.green), str(self.blue))
+    
+
+WHITE = rgb(255, 0, 255)
 
 class Shape(object):
     def __init__(self, shape, centerX, centerY, centerZ, width, height, depth,
-                              angleX=0, angleY=0, angleZ=0):
+                              angleX=0, angleY=0, angleZ=0, fill=WHITE):
+        self._object = shape
         self._shape = shape[0]
         
         self._centerX = centerX
@@ -17,8 +33,45 @@ class Shape(object):
         self._height = height
         self._depth = depth
         
+        self._fill = fill
+        
+        self._keyedFrames = []
+        self.updateShape()
+        self.setColor()
+        
+    
+    @property    
+    def keyedFrames(self):
+        return self._keyedFrames
+    
+    def setKeyFrame(self, frame):
+        self._keyedFrames.append(frame)
+        setCurrentTime(frame)
+        self.updateShape()
+        setKeyframe()
+        print('update2')
+   
+    @property  
+    def fill(self):
+        return self._fill
+        
+    @fill.setter
+    def fill(self, value):
+        self._fill = value
+        self.setColor()
+        
+    def setColor(self):
+        newBlin = cmds.shadingNode('blinn', asShader=True)
+        sg = cmds.sets(str(self._shape), renderable=True, noSurfaceShader=True, empty=True, name=str(newBlin)+"SG")
+        cmds.connectAttr(str(newBlin)+".outColor", str(sg)+".surfaceShader")
+        cmds.setAttr(str(newBlin)+".color", self._fill.red / 255, self._fill.green / 255, self._fill.blue / 255, 
+                     type='double3')
+        cmds.sets(str(self._shape), forceElement=str(sg))
+        
     def updateShape(self):
-        #self._shape.translate.set([self._centerX, self._centerY, self._centerZ])
+        select(self._shape)
+        self._shape.translate.set([self._centerX, self._centerY, self._centerZ])
+        
         #self._shape.rotate.set([self._angleX, self._angleY, self._angleZ])
         #self._shape.transform.set([self._width, self._height, self._depth])
         pass
@@ -26,7 +79,6 @@ class Shape(object):
     # center x, y, z getters and setters
     @property
     def centerX(self):
-
         return self._centerX
     
     @centerX.setter
