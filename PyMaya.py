@@ -1,7 +1,4 @@
 from pymel.core import *
-#import pymel.tools.mel2py as mel2py
-#string = '''connectAttr -f blinn3.outColor blinn3SG.surfaceShader;'''
-#print mel2py.mel2pyStr(string)
 
 class rgb(object):
     def __init__(self, r, g, b):
@@ -22,7 +19,7 @@ class Shape(object):
         self._shape = shape[0]
         
         self._centerX = centerX
-        self._centerY = centerX
+        self._centerY = centerY
         self._centerZ = centerZ
 
         self._angleX = angleX
@@ -49,7 +46,6 @@ class Shape(object):
         setCurrentTime(frame)
         self.updateShape()
         setKeyframe()
-        print('update2')
    
     @property  
     def fill(self):
@@ -64,7 +60,7 @@ class Shape(object):
         newBlin = cmds.shadingNode('blinn', asShader=True)
         sg = cmds.sets(str(self._shape), renderable=True, noSurfaceShader=True, empty=True, name=str(newBlin)+"SG")
         cmds.connectAttr(str(newBlin)+".outColor", str(sg)+".surfaceShader")
-        cmds.setAttr(str(newBlin)+".color", self._fill.red / 255, self._fill.green / 255, self._fill.blue / 255, 
+        cmds.setAttr(str(newBlin)+".color", self._fill.red / 255.0, self._fill.green / 255.0, self._fill.blue / 255.0, 
                      type='double3')
         cmds.sets(str(self._shape), forceElement=str(sg))
         
@@ -73,8 +69,10 @@ class Shape(object):
         self._shape.translate.set([self._centerX, self._centerY, self._centerZ])
         
         #self._shape.rotate.set([self._angleX, self._angleY, self._angleZ])
-        #self._shape.transform.set([self._width, self._height, self._depth])
-        pass
+        # unsure why this is this order? something here is messed up?
+        #       z               x            y
+        scale(self._depth, self._width, self._height, absolute=True)
+
     
     # center x, y, z getters and setters
     @property
@@ -119,7 +117,7 @@ class Shape(object):
         return self._angleY
     
     @angleY.setter
-    def centerY(self, value):
+    def angleY(self, value):
         self._angleY = value
         self.updateShape()
 
