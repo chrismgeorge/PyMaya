@@ -1,8 +1,10 @@
 from Cube import Cube
 from PyMaya import rgb
 import maya.cmds as cmds
+from random import *
 
 screenObjects = cmds.ls("pCube*", "blinn*")
+cmds.callbacks(clearAllCallbacks = True)
 if (len(screenObjects) > 0): cmds.delete(screenObjects)
 
 def getDataFromFile(fileName):
@@ -11,11 +13,12 @@ def getDataFromFile(fileName):
     return data
     
 def animateNotes(notes):
-    global frame
+    curFrame = 50
+    tempo = 2.25
+    song = planes = getDataFromFile('/Volumes/Users/cmgeorge/documents/psongIntensity.txt')
     for i in song:
         i = int(i)
-        
-        for pix in range(i*8):
+        for pix in range(i):
             t = True
             while(t):
                 randRow = randint(0, len(notes)-1)
@@ -27,18 +30,15 @@ def animateNotes(notes):
 
             curPix = notes[randRow][randCol]
             notes[randRow].remove(curPix)
-            cmds.select(curPix)
-            # Animate Pixel
-            cmds.currentTime(frame)
-            cmds.select(curPix)
-            cmds.setKeyframe()
             
-            # 3) Move note up and make small
-            cmds.currentTime((frame + 20))
-            cmds.move(0, 20, 0, r=True)
-            cmds.scale(0,0,0)
-            cmds.setKeyframe()
-        frame += tempo
+            curPix.setKeyFrame(curFrame - 1)
+            curPix.centerY += 20
+            curPix.width = 0
+            curPix.height = 0 
+            curPix.depth = 0
+            curPix.setKeyFrame(curFrame + 20)
+
+        curFrame += tempo
 
 def makeImage():
     planes = getDataFromFile('/Volumes/Users/cmgeorge/documents/chapPall.txt')
@@ -47,12 +47,12 @@ def makeImage():
     for row in range(len(planes)):
         curRowNotes = []
         for col in range(len(planes[0])):
-            Cube(row*.25, 0, col*.25, width=.25, height=.25, depth=.25,
+            pix = Cube(row*.25, 0, col*.25, width=.25, height=.25, depth=.25,
                        fill=rgb(planes[row][col][0], planes[row][col][1], planes[row][col][2]))
             curRowNotes.append(pix)
         notes.append(curRowNotes)
         
-    #animateNotes(notes)
+    animateNotes(notes)
     
 makeImage()
 
