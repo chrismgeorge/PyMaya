@@ -5,7 +5,8 @@
 ### Cube
 
 ```markdown
-Cube(centerX, centerY, centerZ, width=1, height=1, depth=1, angleX=0, angleY=0, angleZ=0, fill=rgb(#, #, #))
+Cube(centerX, centerY, centerZ, width=1, height=1, depth=1, angleX=0, angleY=0, angleZ=0, 
+     fill=rgb(#, #, #))
 
 # create a minimal cube (default color is white if no fill specified)
 c = Cube(0, 0, 0)
@@ -21,39 +22,23 @@ c.angleX += 10
 ```markdown
 shape.setKeyFrame(frame)
 
-# Animation that has a cube start at 0, 0, 0 and move to 0, 0, 10 on frame 10
+# Animation that has a cube start at 0, 0, 0 and move to 10, 0, 0 on frame 10
 c = Cube(0, 0, 0)
 c.setKeyFrame(0)
 c.centerX += 10
 c.setKeyFrame(10)
 ```
 
-
-
+### Other shape methods
 ```markdown
-Syntax highlighted code block
+shape.setWHD(newWidth, newHeight, newDepth)
+width, height, depth = shape.getWHD()
+# Getting/Setting the width, height, and depth of a shape in one line each
+c = Cube(0, 0, 0, width=20, depth=10)
+cWidth, cHeight, cDepth = c.getWHD()
+# cWidth=20, cHeight=1, cDepth=10
 
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+c.setWHD(10, 100, 18)
+cWidth, cHeight, cDepth = c.getWHD()
+# cWidth=10, cHeight=100, cDepth=18
 ```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/chrismgeorge/PyMaya/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
