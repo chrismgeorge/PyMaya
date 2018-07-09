@@ -1,12 +1,34 @@
-# Welcome to GitHub Pages
+# PyMaya Documentation
 
-You can use the [editor on GitHub](https://github.com/chrismgeorge/PyMaya/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+## Creating Shapes
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### Cube
 
-### Markdown
+```markdown
+Cube(centerX, centerY, centerZ, width=1, height=1, depth=1, angleX=0, angleY=0, angleZ=0, fill=rgb(#, #, #))
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+# create a minimal cube (default color is white if no fill specified)
+c = Cube(0, 0, 0)
+
+# move the cube
+c.centerX += 10
+
+# rotate the cube
+c.angleX += 10
+```
+
+### Setting Key Frames
+```markdown
+shape.setKeyFrame(frame)
+
+# Animation that has a cube start at 0, 0, 0 and move to 0, 0, 10 on frame 10
+c = Cube(0, 0, 0)
+c.setKeyFrame(0)
+c.centerX += 10
+c.setKeyFrame(10)
+```
+
+
 
 ```markdown
 Syntax highlighted code block
