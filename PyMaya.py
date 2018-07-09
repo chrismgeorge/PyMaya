@@ -10,7 +10,7 @@ class rgb(object):
         return "rgb(%s, %s, %s)" %(str(self.red), str(self.green), str(self.blue))
     
 
-WHITE = rgb(255, 0, 255)
+WHITE = rgb(255, 255, 255)
 
 class Shape(object):
     def __init__(self, shape, centerX, centerY, centerZ, width, height, depth,
@@ -67,12 +67,21 @@ class Shape(object):
     def updateShape(self):
         select(self._shape)
         self._shape.translate.set([self._centerX, self._centerY, self._centerZ])
-        
+        rotate(self._angleX, self._angleY, self._angleZ)
         #self._shape.rotate.set([self._angleX, self._angleY, self._angleZ])
         # unsure why this is this order? something here is messed up?
         #       z               x            y
         scale(self._depth, self._width, self._height, absolute=True)
-
+    
+    # custom methods for accessing width, height, and depth all at once
+    def getWHD(self):
+        return self._width, self._height, self._depth
+    
+    def setWHD(self, newWidth, newHeight, newDepth):
+        self._width = newWidth
+        self._height = newHeight
+        self._depth = newDepth
+        self.updateShape()
     
     # center x, y, z getters and setters
     @property
