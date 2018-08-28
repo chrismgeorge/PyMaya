@@ -9,12 +9,23 @@ class rgb(object):
     def __str__(self):
         return "rgb(%s, %s, %s)" %(str(self.red), str(self.green), str(self.blue))
 
+class waveDeformer(object):
+    def __init__(self, amplitude=0, wavelength=1, offset=0, dropoff=0, minRadius=0,
+                 maxRadius=1):
+        self.amplitude = amplitude
+        self.wavelength  = wavelength
+        self.offset = offset
+        self.dropoff = dropoff
+        self.minRadius = minRadius
+        self.maxRadius = maxRadius
+
 
 WHITE = rgb(255, 255, 255)
 
 class Shape(object):
     def __init__(self, shape, centerX, centerY, centerZ, width, height, depth,
-                 angleX=0, angleY=0, angleZ=0, fill=WHITE):
+                 angleX=0, angleY=0, angleZ=0, fill=WHITE,
+                 waveDeformer=None):
         self._object = shape
         self._shape = shape[0]
         
@@ -32,11 +43,43 @@ class Shape(object):
         
         self._fill = fill
         self._blinn = None
+        self._waveDeformer = waveDeformer
+        self._wave = None
+        if (self._waveDeformer != None):
+            self.setWaveDeformer()
+        
         self.setColor()
         
         self._keyedFrames = []
         self.updateShape()
     
+    @property
+    def waveDeformer(self):
+        return self._waveDeformer
+    
+    def waveDeformerSetAttributes(self):
+        cmds.setAttr(str(self._wave[0])+".minRadius", self._waveDeformer.minRadius)
+        cmds.setAttr(str(self._wave[0])+".maxRadius", self._waveDeformer.maxRadius)
+        cmds.setAttr(str(self._wave[0])+".amplitude", self._waveDeformer.amplitude)
+        cmds.setAttr(str(self._wave[0])+".wavelength", self._waveDeformer.wavelength)
+        cmds.setAttr(str(self._wave[0])+".dropoff", self._waveDeformer.dropoff)
+        cmds.setAttr(str(self._wave[0])+".offset", self._waveDeformer.offset)
+    
+    @waveDeformer.setter
+    def waveDeformer(self, value):
+        self._waveDeformer = value
+        if self._wave == None:
+            self.setWaveDeformer()
+        waveDeformerSetAttributes(self)
+    
+    def setWaveDeformer(self):
+        select(self._shape)
+        self._wave = nonLinear(type='wave', minRadius=self._waveDeformer.minRadius,
+                               maxRadius=self._waveDeformer.maxRadius,
+                               amplitude=self._waveDeformer.maxRadius,
+                               wavelength=self._waveDeformer.wavelength,
+                               dropoff=self._waveDeformer.dropoff,
+                               offset=self._waveDeformer.offset)
     
     @property
     def keyedFrames(self):
@@ -50,7 +93,10 @@ class Shape(object):
         cmds.setAttr(str(self._blinn)+".color", self._fill.red / 255.0, self._fill.green / 255.0, self._fill.blue / 255.0,
                      type='double3')
         setKeyframe(str(self._blinn)+".color")
-    
+        if (self._waveDeformer != None):
+            self.waveDeformerSetAttributes()
+            setKeyframe(self._wave[0])
+
     @property
     def fill(self):
         return self._fill
@@ -73,12 +119,12 @@ class Shape(object):
                     type='double3')
         cmds.sets(str(self._shape), forceElement=str(sg))
 
-def updateShape(self):
-    select(self._shape)
-    # set its movement, rotation, scale, and color
-    self._shape.translate.set([self._centerX, self._centerY, self._centerZ])
-    rotate(self._angleX, self._angleY, self._angleZ)
-    scale(self._depth, self._width, self._height, absolute=True)
+    def updateShape(self):
+        select(self._shape)
+        # set its movement, rotation, scale, and color
+        self._shape.translate.set([self._centerX, self._centerY, self._centerZ])
+        rotate(self._angleX, self._angleY, self._angleZ)
+        scale(self._depth, self._width, self._height, absolute=True)
     
     
     # custom methods for accessing width, height, and depth all at once
