@@ -8,36 +8,37 @@ class rgb(object):
     
     def __str__(self):
         return "rgb(%s, %s, %s)" %(str(self.red), str(self.green), str(self.blue))
-    
+
 
 WHITE = rgb(255, 255, 255)
 
 class Shape(object):
     def __init__(self, shape, centerX, centerY, centerZ, width, height, depth,
-                              angleX=0, angleY=0, angleZ=0, fill=WHITE):
+                 angleX=0, angleY=0, angleZ=0, fill=WHITE):
         self._object = shape
         self._shape = shape[0]
         
         self._centerX = centerX
         self._centerY = centerY
         self._centerZ = centerZ
-
+        
         self._angleX = angleX
         self._angleY = angleY
         self._angleZ = angleZ
-
+        
         self._width = width
         self._height = height
         self._depth = depth
         
         self._fill = fill
+        self._blinn = None
+        self.setColor()
         
         self._keyedFrames = []
         self.updateShape()
-        self.setColor()
-        
     
-    @property    
+    
+    @property
     def keyedFrames(self):
         return self._keyedFrames
     
@@ -46,32 +47,37 @@ class Shape(object):
         setCurrentTime(frame)
         self.updateShape()
         setKeyframe()
-   
-    @property  
+    
+    @property
     def fill(self):
         return self._fill
-        
+    
     @fill.setter
     def fill(self, value):
         self._fill = value
-        self.setColor()
-        
-    def setColor(self):
-        newBlin = cmds.shadingNode('blinn', asShader=True)
-        sg = cmds.sets(str(self._shape), renderable=True, noSurfaceShader=True, empty=True, name=str(newBlin)+"SG")
-        cmds.connectAttr(str(newBlin)+".outColor", str(sg)+".surfaceShader")
-        cmds.setAttr(str(newBlin)+".color", self._fill.red / 255.0, self._fill.green / 255.0, self._fill.blue / 255.0, 
+        cmds.setAttr(str(self._blinn)+".color", self._fill.red / 255.0,
+                     self._fill.green / 255.0, self._fill.blue / 255.0,
                      type='double3')
-        cmds.sets(str(self._shape), forceElement=str(sg))
-        
-    def updateShape(self):
-        select(self._shape)
-        self._shape.translate.set([self._centerX, self._centerY, self._centerZ])
+    
+    # Only called once when object is created to create the blinn for the object
+    def setColor(self):
+        self._blinn = cmds.shadingNode('blinn', asShader=True)
+        sg = cmds.sets(str(self._shape), renderable=True, noSurfaceShader=True,
+                       empty=True, name=str(newBlin)+"SG")
+                       cmds.connectAttr(str(self._blinn)+".outColor", str(sg)+".surfaceShader")
+                       cmds.setAttr(str(self._blinn)+".color", self._fill.red / 255.0,
+                                    self._fill.green / 255.0, self._fill.blue / 255.0,
+                                    type='double3')
+                       cmds.sets(str(self._shape), forceElement=str(sg))
+
+def updateShape(self):
+    select(self._shape)
+    # set its movement, rotation, scale, and color
+    self._shape.translate.set([self._centerX, self._centerY, self._centerZ])
         rotate(self._angleX, self._angleY, self._angleZ)
-        #self._shape.rotate.set([self._angleX, self._angleY, self._angleZ])
-        # unsure why this is this order? something here is messed up?
-        #       z               x            y
         scale(self._depth, self._width, self._height, absolute=True)
+        cmds.setAttr(str(self._blinn)+".color", self._fill.red / 255.0, self._fill.green / 255.0, self._fill.blue / 255.0,
+                     type='double3')
     
     # custom methods for accessing width, height, and depth all at once
     def getWHD(self):
@@ -92,7 +98,7 @@ class Shape(object):
     def centerX(self, value):
         self._centerX = value
         self.updateShape()
-
+    
     @property
     def centerY(self):
         return self._centerY
@@ -101,7 +107,7 @@ class Shape(object):
     def centerY(self, value):
         self._centerY = value
         self.updateShape()
-
+    
     @property
     def centerZ(self):
         return self._centerZ
@@ -110,7 +116,7 @@ class Shape(object):
     def centerZ(self, value):
         self._centerZ = value
         self.updateShape()
-
+    
     # angle x, y, z getters and setters
     @property
     def angleX(self):
@@ -120,7 +126,7 @@ class Shape(object):
     def angleX(self, value):
         self._angleX = value
         self.updateShape()
-
+    
     @property
     def angleY(self):
         return self._angleY
@@ -129,7 +135,7 @@ class Shape(object):
     def angleY(self, value):
         self._angleY = value
         self.updateShape()
-
+    
     @property
     def angleZ(self):
         return self._angleZ
@@ -138,7 +144,7 @@ class Shape(object):
     def angleZ(self, value):
         self._angleZ = value
         self.updateShape()
-
+    
     # Width, height, depth, getters and setters
     @property
     def width(self):
@@ -148,7 +154,7 @@ class Shape(object):
     def width(self, value):
         self._width = value
         self.updateShape()
-
+    
     @property
     def height(self):
         return self._height
@@ -157,7 +163,7 @@ class Shape(object):
     def height(self, value):
         self._height = value
         self.updateShape()
-
+    
     @property
     def depth(self):
         return self._depth
@@ -167,4 +173,4 @@ class Shape(object):
         self._depth = value
         self.updateShape()
 
-    
+
