@@ -47,6 +47,9 @@ class Shape(object):
         setCurrentTime(frame)
         self.updateShape()
         setKeyframe()
+        cmds.setAttr(str(self._blinn)+".color", self._fill.red / 255.0, self._fill.green / 255.0, self._fill.blue / 255.0,
+                     type='double3')
+        setKeyframe(str(self._blinn)+".color")
     
     @property
     def fill(self):
@@ -63,11 +66,11 @@ class Shape(object):
     def setColor(self):
         self._blinn = cmds.shadingNode('blinn', asShader=True)
         sg = cmds.sets(str(self._shape), renderable=True, noSurfaceShader=True,
-                       empty=True, name=str(newBlin)+"SG")
+                       empty=True, name=str(self._blinn)+"SG")
         cmds.connectAttr(str(self._blinn)+".outColor", str(sg)+".surfaceShader")
         cmds.setAttr(str(self._blinn)+".color", self._fill.red / 255.0,
-                     self._fill.green / 255.0, self._fill.blue / 255.0,
-                     type='double3')
+                    self._fill.green / 255.0, self._fill.blue / 255.0,
+                    type='double3')
         cmds.sets(str(self._shape), forceElement=str(sg))
 
 def updateShape(self):
@@ -76,8 +79,7 @@ def updateShape(self):
     self._shape.translate.set([self._centerX, self._centerY, self._centerZ])
     rotate(self._angleX, self._angleY, self._angleZ)
     scale(self._depth, self._width, self._height, absolute=True)
-    cmds.setAttr(str(self._blinn)+".color", self._fill.red / 255.0, self._fill.green / 255.0, self._fill.blue / 255.0,
-                 type='double3')
+    
     
     # custom methods for accessing width, height, and depth all at once
     def getWHD(self):
