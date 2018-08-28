@@ -64,20 +64,20 @@ class Shape(object):
         self._blinn = cmds.shadingNode('blinn', asShader=True)
         sg = cmds.sets(str(self._shape), renderable=True, noSurfaceShader=True,
                        empty=True, name=str(newBlin)+"SG")
-                       cmds.connectAttr(str(self._blinn)+".outColor", str(sg)+".surfaceShader")
-                       cmds.setAttr(str(self._blinn)+".color", self._fill.red / 255.0,
-                                    self._fill.green / 255.0, self._fill.blue / 255.0,
-                                    type='double3')
-                       cmds.sets(str(self._shape), forceElement=str(sg))
+        cmds.connectAttr(str(self._blinn)+".outColor", str(sg)+".surfaceShader")
+        cmds.setAttr(str(self._blinn)+".color", self._fill.red / 255.0,
+                     self._fill.green / 255.0, self._fill.blue / 255.0,
+                     type='double3')
+        cmds.sets(str(self._shape), forceElement=str(sg))
 
 def updateShape(self):
     select(self._shape)
     # set its movement, rotation, scale, and color
     self._shape.translate.set([self._centerX, self._centerY, self._centerZ])
-        rotate(self._angleX, self._angleY, self._angleZ)
-        scale(self._depth, self._width, self._height, absolute=True)
-        cmds.setAttr(str(self._blinn)+".color", self._fill.red / 255.0, self._fill.green / 255.0, self._fill.blue / 255.0,
-                     type='double3')
+    rotate(self._angleX, self._angleY, self._angleZ)
+    scale(self._depth, self._width, self._height, absolute=True)
+    cmds.setAttr(str(self._blinn)+".color", self._fill.red / 255.0, self._fill.green / 255.0, self._fill.blue / 255.0,
+                 type='double3')
     
     # custom methods for accessing width, height, and depth all at once
     def getWHD(self):
