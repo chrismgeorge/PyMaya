@@ -10,14 +10,22 @@ class rgb(object):
         return "rgb(%s, %s, %s)" %(str(self.red), str(self.green), str(self.blue))
 
 class waveDeformer(object):
-    def __init__(self, amplitude=0, wavelength=1, offset=0, dropoff=0, minRadius=0,
-                 maxRadius=1):
+    def __init__(self, amplitude=0.0, wavelength=1.0, offset=0.0, dropoff=0.0, minRadius=0.0,
+                 maxRadius=1.0):
         self.amplitude = amplitude
         self.wavelength  = wavelength
         self.offset = offset
         self.dropoff = dropoff
         self.minRadius = minRadius
         self.maxRadius = maxRadius
+    
+    def __str__(self):
+        return "waveDeformer(%s, %s, %s, %s, %s, %s)" %(str(self.amplitude),
+                                                        str(self.wavelength),
+                                                        str(self.offset),
+                                                        str(self.dropoff),
+                                                        str(self.minRadius),
+                                                        str(self.maxRadius))
 
 
 WHITE = rgb(255, 255, 255)
@@ -70,16 +78,13 @@ class Shape(object):
         self._waveDeformer = value
         if self._wave == None:
             self.setWaveDeformer()
-        waveDeformerSetAttributes(self)
+        
+        self.waveDeformerSetAttributes()
     
     def setWaveDeformer(self):
         select(self._shape)
-        self._wave = nonLinear(type='wave', minRadius=self._waveDeformer.minRadius,
-                               maxRadius=self._waveDeformer.maxRadius,
-                               amplitude=self._waveDeformer.maxRadius,
-                               wavelength=self._waveDeformer.wavelength,
-                               dropoff=self._waveDeformer.dropoff,
-                               offset=self._waveDeformer.offset)
+        self._wave = nonLinear(type='wave')
+        self.waveDeformerSetAttributes()
     
     @property
     def keyedFrames(self):
@@ -119,12 +124,12 @@ class Shape(object):
                     type='double3')
         cmds.sets(str(self._shape), forceElement=str(sg))
 
-    def updateShape(self):
-        select(self._shape)
-        # set its movement, rotation, scale, and color
-        self._shape.translate.set([self._centerX, self._centerY, self._centerZ])
-        rotate(self._angleX, self._angleY, self._angleZ)
-        scale(self._depth, self._width, self._height, absolute=True)
+def updateShape(self):
+    select(self._shape)
+    # set its movement, rotation, scale, and color
+    self._shape.translate.set([self._centerX, self._centerY, self._centerZ])
+    rotate(self._angleX, self._angleY, self._angleZ)
+    scale(self._depth, self._width, self._height, absolute=True)
     
     
     # custom methods for accessing width, height, and depth all at once
