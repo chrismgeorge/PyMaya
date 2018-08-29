@@ -27,13 +27,32 @@ class waveDeformer(object):
                                                         str(self.minRadius),
                                                         str(self.maxRadius))
 
+class squashDeformer(object):
+    def __init__(self, lowBound=-1.0, highBound=1.0, factor=0.0, expand=1.0,
+                 maxExpandPos=0.5, startSmoothness=0.0, endSmoothness=0.0):
+        self.lowBound = lowBound
+        self.highBound  = highBound
+        self.factor = factor
+        self.expand = expand
+        self.maxExpandPos = maxExpandPos
+        self.startSmoothness = startSmoothness
+        self.endSmoothness = endSmoothness
+
+def __str__(self):
+    return "squashDeformer(%s, %s, %s, %s, %s, %s, %s)" %(str(self.lowBound),
+                                                          str(self.highBound),
+                                                          str(self.factor),
+                                                          str(self.expand),
+                                                          str(self.maxExpandPos),
+                                                          str(self.startSmoothness),
+                                                          str(self.endSmoothness))
 
 WHITE = rgb(255, 255, 255)
 
 class Shape(object):
     def __init__(self, shape, centerX, centerY, centerZ, width, height, depth,
                  angleX=0, angleY=0, angleZ=0, fill=WHITE,
-                 waveDeformer=None):
+                 waveDeformer=None, squashDeformer=None):
         self._object = shape
         self._shape = shape[0]
         
@@ -56,10 +75,41 @@ class Shape(object):
         if (self._waveDeformer != None):
             self.setWaveDeformer()
         
+        self._squashDeformer = squashDeformer
+        self._squash = None
+        if (self._squashDeformer != None):
+            self.setSquashDeformer()
+        
         self.setColor()
         
         self._keyedFrames = []
         self.updateShape()
+    
+    @property
+    def squashDeformer(self):
+        return self._squashDeformer
+    
+    def squashDeformerSetAttributes(self):
+        cmds.setAttr(str(self._squash[0])+".lowBound", self._squashDeformer.lowBound)
+        cmds.setAttr(str(self._squash[0])+".highBound", self._squashDeformer.highBound)
+        cmds.setAttr(str(self._squash[0])+".factor", self._squashDeformer.factor)
+        cmds.setAttr(str(self._squash[0])+".expand", self._squashDeformer.expand)
+        cmds.setAttr(str(self._squash[0])+".maxExpandPos", self._squashDeformer.maxExpandPos)
+        cmds.setAttr(str(self._squash[0])+".startSmoothness", self._squashDeformer.startSmoothness)
+        cmds.setAttr(str(self._squash[0])+".endSmoothness", self._squashDeformer.endSmoothness)
+    
+    @squashDeformer.setter
+    def squashDeformer(self, value):
+        self._squashDeformer = value
+        if self._squash == None:
+            self.setSquashDeformer()
+        
+        self.squashDeformerSetAttributes()
+    
+    def setSquashDeformer(self):
+        select(self._shape)
+        self._squash = nonLinear(type='squash')
+        self.squashDeformerSetAttributes()
     
     @property
     def waveDeformer(self):
@@ -101,6 +151,9 @@ class Shape(object):
         if (self._waveDeformer != None):
             self.waveDeformerSetAttributes()
             setKeyframe(self._wave[0])
+         if (self._squashDeformer != None):
+             self.squashDeformerSetAttributes()
+            setKeyframe(self._squash[0])
 
     @property
     def fill(self):
@@ -124,12 +177,12 @@ class Shape(object):
                     type='double3')
         cmds.sets(str(self._shape), forceElement=str(sg))
 
-def updateShape(self):
-    select(self._shape)
-    # set its movement, rotation, scale, and color
-    self._shape.translate.set([self._centerX, self._centerY, self._centerZ])
-    rotate(self._angleX, self._angleY, self._angleZ)
-    scale(self._depth, self._width, self._height, absolute=True)
+    def updateShape(self):
+        select(self._shape)
+        # set its movement, rotation, scale, and color
+        self._shape.translate.set([self._centerX, self._centerY, self._centerZ])
+        rotate(self._angleX, self._angleY, self._angleZ)
+        scale(self._depth, self._width, self._height, absolute=True)
     
     
     # custom methods for accessing width, height, and depth all at once
