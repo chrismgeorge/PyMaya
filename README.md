@@ -40,6 +40,11 @@ c.setKeyFrame(10)
 
 ```
 
+### Squash Deformer
+```markdown
+
+```
+
 ### Other shape methods
 ```markdown
 shape.setWHD(newWidth, newHeight, newDepth)
