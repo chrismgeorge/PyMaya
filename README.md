@@ -35,6 +35,11 @@ c.centerX += 10
 c.setKeyFrame(10)
 ```
 
+### Wave Deformer
+```markdown
+
+```
+
 ### Other shape methods
 ```markdown
 shape.setWHD(newWidth, newHeight, newDepth)
