@@ -151,8 +151,8 @@ class Shape(object):
         if (self._waveDeformer != None):
             self.waveDeformerSetAttributes()
             setKeyframe(self._wave[0])
-         if (self._squashDeformer != None):
-             self.squashDeformerSetAttributes()
+        if (self._squashDeformer != None):
+            self.squashDeformerSetAttributes()
             setKeyframe(self._squash[0])
 
     @property
